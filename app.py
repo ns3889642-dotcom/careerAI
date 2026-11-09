@@ -4,117 +4,181 @@ from resume_parser import extract_resume_text
 from skill_extractor import extract_skills
 from job_matcher import calculate_match
 from career_recommender import recommend_careers
+from report_generator import generate_report
 
 
-# ---------------- PAGE CONFIGURATION ----------------
+# ----------------------------------
+# PAGE CONFIGURATION
+# ----------------------------------
 
 st.set_page_config(
-    page_title="CareerAI | Career Guidance",
+    page_title="CareerAI | Smart Career Guidance",
     page_icon="🚀",
     layout="wide"
 )
 
 
-# ---------------- CUSTOM CSS ----------------
+# ----------------------------------
+# CUSTOM CSS
+# ----------------------------------
 
 st.markdown("""
 <style>
 
 .stApp {
-    background-color: #F4F7FC;
+    background: linear-gradient(135deg, #071426, #101d38);
+    color: #ffffff;
 }
 
-.main .block-container {
-    padding-top: 2rem;
-    padding-bottom: 3rem;
+header[data-testid="stHeader"] {
+    background: transparent;
 }
 
-h1 {
-    color: #173B70;
-    font-weight: 800;
+section[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #101a32, #172b4d);
 }
 
-h2, h3 {
-    color: #244B78;
+section[data-testid="stSidebar"] * {
+    color: #ffffff !important;
+}
+
+.main-title {
+    background: linear-gradient(90deg, #06b6d4, #6366f1);
+    padding: 35px;
+    border-radius: 18px;
+    text-align: center;
+    color: white;
+    margin-bottom: 25px;
+}
+
+.main-title h1 {
+    color: white;
+    font-size: 42px;
+}
+
+.main-title p {
+    color: white;
+    font-size: 17px;
+}
+
+.section-card {
+    background: #172b4d;
+    padding: 22px;
+    border-radius: 14px;
+    border: 1px solid #334b70;
+    margin-bottom: 15px;
 }
 
 div[data-testid="stMetric"] {
-    background-color: white;
+    background: #172b4d;
     padding: 20px;
     border-radius: 12px;
-    border: 1px solid #DCE5F1;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    border: 1px solid #334b70;
 }
 
-.stButton button {
-    background-color: #2463EB;
+div[data-testid="stMetric"] label {
+    color: #cbd5e1 !important;
+}
+
+div[data-testid="stMetric"] [data-testid="stMetricValue"] {
+    color: #38bdf8 !important;
+}
+
+.stButton button,
+.stDownloadButton button {
+    background: linear-gradient(90deg, #2563eb, #7c3aed);
     color: white;
-    border-radius: 8px;
     border: none;
+    border-radius: 10px;
+    padding: 12px 20px;
     font-weight: bold;
     width: 100%;
 }
 
-.stButton button:hover {
-    background-color: #1748B8;
+.stButton button:hover,
+.stDownloadButton button:hover {
+    background: linear-gradient(90deg, #0891b2, #4f46e5);
+    color: white;
+    border: none;
+}
+
+input, textarea {
+    background-color: #ffffff !important;
+    color: #111827 !important;
+}
+
+[data-testid="stFileUploader"] {
+    background: #172b4d;
+    padding: 12px;
+    border-radius: 12px;
+}
+
+[data-testid="stFileUploader"] * {
     color: white;
 }
 
-section[data-testid="stSidebar"] {
-    background-color: #E8EFFA;
-}
-
-div[data-testid="stProgress"] > div > div {
-    background-color: #2463EB;
+hr {
+    border-color: #334b70;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
 
-# ---------------- HEADER ----------------
-
-st.title("🚀 CareerAI")
-
-st.subheader("AI-Powered Resume Analyzer & Career Guidance")
-
-st.write(
-    "Analyze your resume, match job requirements, "
-    "identify missing skills and discover career opportunities."
-)
-
-st.divider()
-
-
-# ---------------- SIDEBAR ----------------
+# ----------------------------------
+# SIDEBAR
+# ----------------------------------
 
 with st.sidebar:
 
     st.title("🚀 CareerAI")
 
-    st.markdown("### Your Career Assistant")
+    st.subheader("Your Smart Career Assistant")
 
     st.write(
-        "Get insights into your professional skills "
-        "and discover opportunities for improvement."
+        "Get insights into your professional "
+        "skills and discover opportunities for improvement."
     )
 
     st.divider()
 
-    st.markdown("### Features")
+    st.subheader("✨ Features")
 
-    st.write("📄 Resume Analysis")
-    st.write("📊 Job Matching")
-    st.write("📌 Missing Skills")
-    st.write("🎯 Career Recommendations")
-    st.write("📈 Skill Coverage")
+    st.markdown("""
+    📄 Resume Analysis
+
+    📊 Job Matching
+
+    📌 Missing Skills
+
+    🎯 Career Recommendations
+
+    📈 Skill Coverage
+
+    📥 PDF Report
+    """)
 
     st.divider()
 
-    st.caption("CareerAI | AI-Powered Career Guidance")
+    st.caption("AI-Powered Career Guidance")
 
 
-# ---------------- INPUT SECTION ----------------
+# ----------------------------------
+# MAIN HEADER
+# ----------------------------------
+
+st.markdown("""
+<div class="main-title">
+    <h1>🚀 CareerAI</h1>
+    <h3>AI-Powered Resume Analyzer & Career Guidance</h3>
+    <p>Discover your strengths. Improve your skills. Build your future.</p>
+</div>
+""", unsafe_allow_html=True)
+
+
+# ----------------------------------
+# UPLOAD SECTION
+# ----------------------------------
 
 st.header("📂 Upload Your Details")
 
@@ -131,151 +195,188 @@ with col2:
 
     job_description = st.text_area(
         "💼 Paste Job Description",
-        height=180,
-        placeholder="Enter job title and required skills..."
+        height=150,
+        placeholder="Paste the job description here..."
     )
 
 
-analyze = st.button(
+st.write("")
+
+analyze_button = st.button(
     "🚀 Analyze My Resume",
     use_container_width=True
 )
 
 
-# ---------------- ANALYSIS ----------------
+# ----------------------------------
+# RESUME ANALYSIS
+# ----------------------------------
 
-if analyze:
+if analyze_button:
 
-    if uploaded_file and job_description.strip():
+    if uploaded_file is None:
 
-        with st.spinner("Analyzing your resume..."):
+        st.warning("Please upload your resume PDF.")
 
-            resume_text = extract_resume_text(uploaded_file)
+    elif not job_description.strip():
 
-            if resume_text and resume_text.strip():
+        st.warning("Please enter a job description.")
 
-                skills = extract_skills(resume_text)
+    else:
 
-                result = calculate_match(
-                    resume_text,
-                    job_description
-                )
+        try:
 
-                recommendations = recommend_careers(skills)
+            with st.spinner("Analyzing your resume... Please wait."):
 
-                # ---------------- RESUME SKILLS ----------------
+                # Extract resume text
+                resume_text = extract_resume_text(uploaded_file)
 
-                st.divider()
+                if not resume_text.strip():
 
-                st.header("📄 Resume Analysis")
-
-                st.subheader("Skills Found")
-
-                if skills:
-
-                    st.success(
-                        "Your resume contains "
-                        + str(len(skills))
-                        + " recognized skills."
-                    )
-
-                    st.write(", ".join(skills))
+                    st.error("Could not read your resume. Please try another PDF.")
 
                 else:
 
-                    st.warning("No known skills detected.")
+                    # Extract skills
+                    skills = extract_skills(resume_text)
 
-                # ---------------- JOB MATCHING ----------------
-
-                st.divider()
-
-                st.header("📊 Job Matching Results")
-
-                col1, col2, col3 = st.columns(3)
-
-                with col1:
-
-                    st.metric(
-                        "Skill Match",
-                        f"{result['match_score']}%"
+                    # Calculate job match
+                    result = calculate_match(
+                        resume_text,
+                        job_description
                     )
 
-                with col2:
+                    # Calculate career recommendations
+                    recommendations = recommend_careers(skills)
 
-                    st.metric(
-                        "Text Similarity",
-                        f"{result['similarity']}%"
+                    # Safely limit progress percentage
+                    match_score = max(
+                        0,
+                        min(100, float(result["match_score"]))
                     )
 
-                with col3:
+                    similarity = max(
+                        0,
+                        min(100, float(result["similarity"]))
+                    )
+
+                    st.success("Resume analyzed successfully!")
+
+                    # ----------------------------------
+                    # RESUME ANALYSIS
+                    # ----------------------------------
+
+                    st.divider()
+
+                    st.header("📄 Resume Analysis")
+
+                    st.subheader("Skills Found")
 
                     st.metric(
-                        "Skills Found",
+                        "Total Recognized Skills",
                         len(skills)
                     )
 
-                match_score = max(
-                    0,
-                    min(100, float(result["match_score"]))
-                )
+                    if skills:
 
-                st.progress(
-                    match_score / 100,
-                    text=f"Overall Skill Match: {match_score:.2f}%"
-                )
-
-                # ---------------- MATCHED SKILLS ----------------
-
-                col1, col2 = st.columns(2)
-
-                with col1:
-
-                    st.subheader("✅ Matched Skills")
-
-                    if result["matched_skills"]:
-
-                        for skill in result["matched_skills"]:
-
-                            st.write("🟢", skill)
+                        st.write(", ".join(skills))
 
                     else:
 
-                        st.info("No matching skills found.")
+                        st.warning("No known skills detected.")
 
-                with col2:
+                    # ----------------------------------
+                    # JOB MATCHING RESULTS
+                    # ----------------------------------
 
-                    st.subheader("📌 Missing Skills")
+                    st.divider()
 
-                    if result["missing_skills"]:
+                    st.header("📊 Job Matching Results")
 
-                        for skill in result["missing_skills"]:
+                    col1, col2, col3 = st.columns(3)
 
-                            st.write("🔴", skill)
+                    with col1:
 
-                    else:
+                        st.metric(
+                            "Skill Match",
+                            f"{match_score:.2f}%"
+                        )
 
-                        st.success("No missing skills!")
+                    with col2:
 
-                # ---------------- CAREER RECOMMENDATIONS ----------------
+                        st.metric(
+                            "Text Similarity",
+                            f"{similarity:.2f}%"
+                        )
 
-                st.divider()
+                    with col3:
 
-                st.header("🎯 Career Recommendations")
+                        st.metric(
+                            "Skills Found",
+                            len(skills)
+                        )
 
-                st.write(
-                    "Explore career paths based on your "
-                    "current resume skills."
-                )
+                    st.write("Overall Skill Match")
 
-                if recommendations:
+                    st.progress(match_score / 100)
 
-                    for item in recommendations:
+                    # ----------------------------------
+                    # MATCHED AND MISSING SKILLS
+                    # ----------------------------------
 
-                        with st.container():
+                    st.divider()
 
-                            st.subheader(
-                                "💼 " + item["career"]
-                            )
+                    col1, col2 = st.columns(2)
+
+                    with col1:
+
+                        st.subheader("✅ Matched Skills")
+
+                        matched_skills = result.get(
+                            "matched_skills", []
+                        )
+
+                        if matched_skills:
+
+                            for skill in matched_skills:
+
+                                st.write("🟢", skill)
+
+                        else:
+
+                            st.info("No matching skills found.")
+
+                    with col2:
+
+                        st.subheader("📌 Missing Skills")
+
+                        missing_skills = result.get(
+                            "missing_skills", []
+                        )
+
+                        if missing_skills:
+
+                            for skill in missing_skills:
+
+                                st.write("🔴", skill)
+
+                        else:
+
+                            st.success("No missing skills detected!")
+
+                    # ----------------------------------
+                    # CAREER RECOMMENDATIONS
+                    # ----------------------------------
+
+                    st.divider()
+
+                    st.header("🎯 Career Recommendations")
+
+                    if recommendations:
+
+                        for item in recommendations:
+
+                            st.subheader(item["career"])
 
                             score = max(
                                 0,
@@ -287,48 +388,76 @@ if analyze:
                                 f"{score:.2f}%"
                             )
 
-                            st.progress(
-                                score / 100
-                            )
+                            st.progress(score / 100)
+
+                            matched = item.get("matched", [])
 
                             st.write(
-                                "**Matching Skills:**",
-                                ", ".join(item["matched"])
-                                if item["matched"]
+                                "Matching skills:",
+                                ", ".join(matched)
+                                if matched
                                 else "No matching skills"
                             )
 
-                            st.divider()
+                    else:
 
-                else:
+                        st.info("No career recommendations available.")
 
-                    st.info("No career recommendations available.")
+                    # ----------------------------------
+                    # PDF REPORT DOWNLOAD
+                    # ----------------------------------
 
-                # ---------------- FINAL MESSAGE ----------------
+                    st.divider()
 
-                st.success(
-                    "Resume analysis completed successfully!"
-                )
+                    st.header("📥 Download Your Report")
 
-                st.caption(
-                    "CareerAI | Your journey towards a better career starts here."
-                )
+                    st.write(
+                        "Download your complete resume analysis "
+                        "and career recommendations as a PDF."
+                    )
 
-            else:
+                    try:
 
-                st.error("Could not read your resume.")
+                        pdf_report = generate_report(
+                            skills,
+                            result,
+                            recommendations
+                        )
 
-    else:
+                        st.download_button(
+                            label="📄 Download PDF Report",
+                            data=pdf_report,
+                            file_name="CareerAI_Analysis_Report.pdf",
+                            mime="application/pdf",
+                            use_container_width=True
+                        )
 
-        st.warning(
-            "Please upload your resume and enter a job description."
-        )
+                    except Exception as pdf_error:
+
+                        st.error(
+                            f"Could not generate PDF report: {pdf_error}"
+                        )
+
+                    st.divider()
+
+                    st.success(
+                        "Thank you for using CareerAI! 🚀"
+                    )
+
+        except Exception as error:
+
+            st.error(
+                f"Something went wrong: {error}"
+            )
 
 
-# ---------------- FOOTER ----------------
+# ----------------------------------
+# FOOTER
+# ----------------------------------
 
 st.divider()
 
-st.caption(
-    "© 2026 CareerAI | AI-Powered Resume Analysis and Career Guidance"
+st.markdown(
+    "<center>🚀 CareerAI | AI-Powered Career Guidance</center>",
+    unsafe_allow_html=True
 )

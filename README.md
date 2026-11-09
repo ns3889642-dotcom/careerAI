@@ -47,3 +47,5 @@ recommends suitable career paths.
 ## 👩‍💻 Developer
 
 Developed as a Python-based career guidance project.
+
+  
